@@ -124,7 +124,7 @@ export const Taskbar: React.FC<TaskbarProps> = ({
             )}
           >
             <app.icon className={cn("w-5 h-5", app.color)} />
-            {openWindows.some(w => w.id === app.id) && (
+            {openWindows.some(w => w.appId === app.id) && (
               <div className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1.5 h-0.5 bg-blue-500 rounded-full" />
             )}
             <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">

@@ -108,12 +108,14 @@ export default function App() {
     }
   }, [isGhostShieldOn, isIDSOn, isIPLoggingOn, addNotification]);
 
-  const openApp = useCallback((appId: string) => {
+  const openApp = useCallback((appId: string, forceNewWindow = false) => {
+    const newId = forceNewWindow ? `${appId}-${Date.now()}` : appId;
+    
     setWindows(prev => {
-      const existing = prev.find(w => w.id === appId);
+      const existing = prev.find(w => w.id === newId);
       if (existing) {
         if (existing.isMinimized) {
-          return prev.map(w => w.id === appId ? { ...w, isMinimized: false, desktopId: activeDesktopId } : w);
+          return prev.map(w => w.id === newId ? { ...w, isMinimized: false, desktopId: activeDesktopId } : w);
         }
         if (existing.desktopId !== activeDesktopId) {
           setActiveDesktopId(existing.desktopId);
@@ -121,7 +123,8 @@ export default function App() {
         return prev;
       }
       return [...prev, {
-        id: appId,
+        id: newId,
+        appId: appId,
         isOpen: true,
         isMinimized: false,
         isMaximized: false,
@@ -129,7 +132,7 @@ export default function App() {
         desktopId: activeDesktopId
       }];
     });
-    setActiveWindowId(appId);
+    setActiveWindowId(newId);
     setMaxZIndex(prev => prev + 1);
     setIsStartOpen(false);
   }, [maxZIndex, activeDesktopId]);
@@ -202,9 +205,9 @@ export default function App() {
     window.dispatchEvent(new CustomEvent('window-focus-change', { detail: { activeId: id } }));
   };
 
-  const renderAppContent = (id: string) => {
-    switch (id) {
-      case 'explorer': return <FileExplorer />;
+  const renderAppContent = (appId: string, windowId: string) => {
+    switch (appId) {
+      case 'explorer': return <FileExplorer onNewWindow={() => openApp('explorer', true)} />;
       case 'recorder': return <ScreenRecorder />;
       case 'vault': return <GhostVault />;
       case 'taskmgr': return <TaskManager />;
@@ -475,7 +478,7 @@ export default function App() {
 
       {/* Windows */}
       {windows.filter(win => win.desktopId === activeDesktopId).map(win => {
-        const app = APPS.find(a => a.id === win.id);
+        const app = APPS.find(a => a.id === win.appId);
         if (!app) return null;
         return (
           <Window
@@ -497,7 +500,7 @@ export default function App() {
             currentDesktopId={activeDesktopId}
             onMoveToDesktop={(desktopId) => moveWindowToDesktop(win.id, desktopId)}
           >
-            {renderAppContent(win.id)}
+            {renderAppContent(win.appId, win.id)}
           </Window>
         );
       })}

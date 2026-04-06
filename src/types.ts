@@ -8,6 +8,7 @@ export type SnapType = 'none' | 'left' | 'right' | 'top-left' | 'top-right' | 'b
 
 export interface WindowState {
   id: string;
+  appId: string;
   isOpen: boolean;
   isMinimized: boolean;
   isMaximized: boolean;

@@ -12,7 +12,7 @@ interface PaneState {
   selectedFile: any | null;
 }
 
-export const FileExplorer: React.FC = () => {
+export const FileExplorer: React.FC<{ onNewWindow?: () => void }> = ({ onNewWindow }) => {
   const [isSplitView, setIsSplitView] = useState(false);
   const [activePane, setActivePane] = useState<'left' | 'right'>('left');
 
@@ -505,6 +505,10 @@ export const FileExplorer: React.FC = () => {
     <div className="flex h-full flex-col text-sm">
       {/* Ribbon/Toolbar */}
       <div className="flex items-center gap-4 px-4 py-2 border-b border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-black/20">
+        <button className="px-2 py-1 hover:bg-black/5 rounded flex items-center gap-1" onClick={onNewWindow}>
+          <Layout className="w-3 h-3" />
+          New Window
+        </button>
         <button className="px-2 py-1 hover:bg-black/5 rounded flex items-center gap-1" onClick={createNewFolder}>
           <FolderPlus className="w-3 h-3" />
           New Folder
